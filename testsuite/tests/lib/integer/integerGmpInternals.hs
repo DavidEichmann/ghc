@@ -86,6 +86,7 @@ main = do
     print $ gcdExtInteger x (-y)
     print $ gcdExtInteger (-x) y
     print $ gcdExtInteger (-x) (-y)
+    print $ gcdExtInteger 2 (2^65 + 1)  -- see Trac #15350
     print $ powInteger 12345 0
     print $ powInteger 12345 1
     print $ powInteger 12345 30
