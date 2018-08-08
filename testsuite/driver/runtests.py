@@ -43,6 +43,7 @@ def signal_handler(signal, frame):
 # cmd-line options
 
 parser = argparse.ArgumentParser(description="GHC's testsuite driver")
+perf_group = parser.add_mutually_exclusive_group()
 
 parser.add_argument("-e", action='append', help="A string to execute from the command line.")
 parser.add_argument("--config-file", action="append", help="config file")
@@ -55,23 +56,31 @@ parser.add_argument("--way", action="append", help="just this way")
 parser.add_argument("--skipway", action="append", help="skip this way")
 parser.add_argument("--threads", type=int, help="threads to run simultaneously")
 parser.add_argument("--verbose", type=int, choices=[0,1,2,3,4,5], help="verbose (Values 0 through 5 accepted)")
-parser.add_argument("--skip-perf-tests", action="store_true", help="skip performance tests")
 parser.add_argument("--junit", type=argparse.FileType('wb'), help="output testsuite summary in JUnit format")
+parser.add_argument("--test-env", default='local', help="Override default chosen test-env.")
+perf_group.add_argument("--skip-perf-tests", action="store_true", help="skip performance tests")
+perf_group.add_argument("--only-perf-tests", action="store_true", help="Only do performance tests")
 
 args = parser.parse_args()
 
-for e in args.e:
-    exec(e)
+if args.e:
+    for e in args.e:
+        exec(e)
 
-for arg in args.config_file:
-    exec(open(arg).read())
+if args.config_file:
+    for arg in args.config_file:
+        exec(open(arg).read())
 
-for arg in args.config:
-    field, value = arg.split('=', 1)
-    setattr(config, field, value)
+if args.config:
+    for arg in args.config:
+        field, value = arg.split('=', 1)
+        setattr(config, field, value)
 
 all_ways = config.run_ways+config.compile_ways+config.other_ways
-config.rootdirs = args.rootdir
+
+if args.rootdir:
+    config.rootdirs = args.rootdir
+
 config.summary_file = args.summary_file
 config.no_print_summary = args.no_print_summary
 
@@ -104,7 +113,12 @@ if args.threads:
 
 if args.verbose is not None:
     config.verbose = args.verbose
+
 config.skip_perf_tests = args.skip_perf_tests
+config.only_perf_tests = args.only_perf_tests
+
+if args.test_env:
+    config.test_env = args.test_env
 
 config.cygwin = False
 config.msys = False
@@ -327,6 +341,8 @@ else:
     sys.stdout.flush()
 
     summary(t, sys.stdout, config.no_print_summary)
+
+    Perf.append_perf_stat(t.metrics)
 
     if config.summary_file:
         with open(config.summary_file, 'w') as file:
