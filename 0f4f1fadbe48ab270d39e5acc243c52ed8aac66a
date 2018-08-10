@@ -1,3 +1,7 @@
 local	T100	some_way	some_field	10
 non-local	W200	other_way	other_field	2
 non-local	W300	other_way	other_field	3
+
+local	T100	some_way	some_field	10
+non-local	W200	other_way	other_field	2
+non-local	W300	other_way	other_field	3
