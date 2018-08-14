@@ -5,3 +5,63 @@ local	T13191	normal	bytes allocated	185942744
 local	T13191	normal	bytes allocated	185942744
 
 local	T13191	normal	bytes allocated	185942744
+
+local	T3924	normal	bytes allocated	50768
+local	join002	optasm	bytes allocated	2000290832
+local	join003	optasm	bytes allocated	2000290832
+local	join004	optasm	bytes allocated	16050728
+local	join007	optasm	bytes allocated	51048
+local	T5835	normal	max_bytes_used	44576
+local	T12791	normal	max_bytes_used	44576
+local	T10359	normal	bytes allocated	450840
+local	T14955	normal	bytes allocated	48050760
+local	T3586	normal	bytes allocated	16102128
+local	T4830	normal	bytes allocated	98072
+local	T876	normal	bytes allocated	57824
+local	lazy-bs-alloc	normal	bytes allocated	430440
+local	T3738	normal	bytes allocated	50528
+local	MethSharing	normal	bytes allocated	480098056
+local	T5205	normal	bytes allocated	57080
+local	T5113	normal	bytes allocated	8058616
+local	T4978	normal	bytes allocated	10136568
+local	T5237	normal	bytes allocated	104400
+local	T5536	normal	bytes allocated	890358128
+local	Conversions	normal	bytes allocated	107584
+local	T4474a	normal	bytes allocated	4831890024
+local	T4474b	normal	bytes allocated	4831890024
+local	T4474c	normal	bytes allocated	4831890024
+local	T5549	normal	bytes allocated	5793140176
+local	T7257	normal	bytes allocated	1297293264
+local	T7954	normal	bytes allocated	1280051080
+local	T5949	normal	bytes allocated	201056
+local	T7797	normal	bytes allocated	480050560
+local	T7619	normal	bytes allocated	41040
+local	T7436	normal	max_bytes_used	60416
+local	T4267	normal	bytes allocated	41040
+local	InlineByteArrayAlloc	normal	bytes allocated	1440041040
+local	InlineArrayAlloc	normal	bytes allocated	1600041040
+local	InlineCloneArrayAlloc	normal	bytes allocated	1600041200
+local	T9339	normal	bytes allocated	50784
+local	T9203	normal	bytes allocated	98360576
+local	T8472	normal	bytes allocated	50808
+local	T13001	normal	bytes allocated	50672
+local	T12990	normal	bytes allocated	20841056
+local	T12996	normal	bytes allocated	79424
+local	T15226	normal	bytes allocated	41064
+local	T13218	normal	bytes allocated	82005568
+local	DeriveNull	normal	bytes allocated	112050880
+local	T14936	normal	bytes allocated	51240
+local	T15226a	normal	bytes allocated	41064
+local	T4334	normal	peak_megabytes_allocated	3
+local	T2762	normal	peak_megabytes_allocated	2
+local	T13623	normal	bytes allocated	50856
+local	space_leak_001	normal	bytes allocated	11315396440
+local	T7850	normal	peak_megabytes_allocated	5
+local	T14052	ghci	bytes allocated	9861629744
+local	T4029	ghci	max_bytes_used	20575416
+local	T10678	normal	bytes allocated	64041488
+local	T13536a	optasm	bytes allocated	86744
+local	T8766	normal	bytes allocated	16828080
+local	T9848	normal	bytes allocated	51784
+local	T3474	normal	max_bytes_used	44576
+local	T13191	normal	bytes allocated	185942744
