@@ -20,7 +20,6 @@ import TcPat
 import Type( mkEmptyTCvSubst, tidyTyCoVarBinders, tidyTypes, tidyType )
 import TcRnMonad
 import TcSigs( emptyPragEnv, completeSigFromId )
-import TcType( mkMinimalBySCs )
 import TcEnv
 import TcMType
 import TcHsSyn
