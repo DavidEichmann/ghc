@@ -220,7 +220,15 @@ fasttest:
 
 .PHONY: test
 test:
+	echo "*** aaaaaaaaaaaaaaaaaaaaaa"
+	echo "*** GhcDynamic = $(GhcDynamic)"
+	echo "*** DYNAMIC_GHC_PROGRAMS = $(DYNAMIC_GHC_PROGRAMS)"
+	echo "*** CABAL_PLUGIN_BUILD = $(CABAL_PLUGIN_BUILD)"
 	$(MAKE) -C testsuite/tests CLEANUP=1 SUMMARY_FILE=../../testsuite_summary.txt
+	echo "*** zzzzzzzzzzzzzzzzzzzzzz"
+	echo "*** GhcDynamic = $(GhcDynamic)"
+	echo "*** DYNAMIC_GHC_PROGRAMS = $(DYNAMIC_GHC_PROGRAMS)"
+	echo "*** CABAL_PLUGIN_BUILD = $(CABAL_PLUGIN_BUILD)"
 
 .PHONY: slowtest fulltest
 slowtest fulltest:
