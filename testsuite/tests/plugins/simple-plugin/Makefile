@@ -9,9 +9,10 @@ HERE := $(abspath .)
 $(eval $(call canonicalise,HERE))
 
 package.%:
-	$(MAKE) -s --no-print-directory clean.$*
+	$(MAKE) --no-print-directory clean.$*
 	mkdir pkg.$*
-	"$(TEST_HC)" -outputdir pkg.$* --make -v0 -o pkg.$*/setup Setup.hs
+	ldd "$(TEST_HC)"
+	"$(TEST_HC)" -outputdir pkg.$* --make -v -o pkg.$*/setup Setup.hs
 	
 	"$(GHC_PKG)" init pkg.$*/local.package.conf
 	

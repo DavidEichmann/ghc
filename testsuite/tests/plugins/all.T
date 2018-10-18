@@ -7,8 +7,8 @@ setTestOpts(req_interp)
 
 test('plugins01',
      [extra_files(['simple-plugin/']), when(opsys('mingw32'), multi_cpu_race),
-      pre_cmd('$MAKE -s --no-print-directory -C simple-plugin package.plugins01 TOP={top}')],
-     run_command, ['$MAKE -s --no-print-directory plugins01'])
+      pre_cmd('$MAKE --no-print-directory -C simple-plugin package.plugins01 TOP={top}')],
+     run_command, ['$MAKE --no-print-directory plugins01'])
 
 test('plugins02',
      [extra_files(['simple-plugin/']), when(opsys('mingw32'), multi_cpu_race),
