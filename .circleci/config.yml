@@ -18,7 +18,7 @@ aliases:
     # ideally we would simply set THREADS here instead of re-detecting it every
     # time we need it below. Unfortunately, there is no way to set an environment
     # variable with the result of a shell script.
-    SKIP_PERF_TESTS: YES
+    SKIP_PERF_TESTS: NO
     VERBOSE: 2
   - &boot
     run:
@@ -32,6 +32,12 @@ aliases:
         include mk/flavours/\$(BuildFlavour).mk
         endif
         EOF
+  - &set_git_identity
+      run:
+        name: Set Git Identity
+        command: |
+          git config user.email "ghc-circleci@haskell.org"
+          git config user.name "GHC CircleCI"
   - &configure_unix
     run:
       name: Configure
@@ -64,10 +70,16 @@ aliases:
       name: Test
       command: |
         mkdir -p test-results
-        make test THREADS=`mk/detect-cpu-count.sh` SKIP_PERF_TESTS=YES JUNIT_FILE=../../test-results/junit.xml
+        METRICS_FILE=$(mktemp)
+        echo "export METRICS_FILE=$METRICS_FILE" >> $BASH_ENV
+        make test THREADS=`mk/detect-cpu-count.sh` SKIP_PERF_TESTS=$SKIP_PERF_TESTS TEST_ENV=$TEST_ENV JUNIT_FILE=../../test-results/junit.xml METRICS_FILE=$METRICS_FILE
   - &store_test_results
     store_test_results:
       path: test-results
+  - &push_perf_note
+    run:
+      name: Push Performance Git Notes
+      command: .circleci/push-test-metrics.sh
   - &slowtest
     run:
       name: Full Test
@@ -102,8 +114,10 @@ jobs:
     environment:
       <<: *buildenv
       GHC_COLLECTOR_FLAVOR: x86_64-linux
+      TEST_ENV: x86_64-linux
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
@@ -113,6 +127,7 @@ jobs:
       - *storeartifacts
       - *test
       - *store_test_results
+      - *push_perf_note
 
   "validate-x86_64-freebsd":
     resource_class: xlarge
@@ -122,8 +137,10 @@ jobs:
       TARGET: FreeBSD
       <<: *buildenv
       GHC_COLLECTOR_FLAVOR: x86_64-freebsd
+      TEST_ENV: x86_64-freebsd
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
@@ -133,6 +150,7 @@ jobs:
       - *storeartifacts
       - *test
       - *store_test_results
+      - *push_perf_note
 
   "validate-x86_64-darwin":
     macos:
@@ -145,8 +163,10 @@ jobs:
       ac_cv_func_clock_gettime: "no"
       GHC_COLLECTOR_FLAVOR: x86_64-darwin
       <<: *buildenv
+      TEST_ENV: x86_64-darwin
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
@@ -156,6 +176,7 @@ jobs:
       - *storeartifacts
       - *test
       - *store_test_results
+      - *push_perf_note
 
   "validate-hadrian-x86_64-linux":
     resource_class: xlarge
@@ -165,6 +186,7 @@ jobs:
       <<: *buildenv
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
@@ -177,8 +199,10 @@ jobs:
       - image: ghcci/x86_64-linux:0.0.4
     environment:
       <<: *buildenv
+      TEST_ENV: x86_64-linux-unreg
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
@@ -186,6 +210,7 @@ jobs:
       - *make
       - *test
       - *store_test_results
+      - *push_perf_note
 
   "validate-x86_64-linux-llvm":
     resource_class: xlarge
@@ -194,6 +219,7 @@ jobs:
     environment:
       <<: *buildenv
       BUILD_FLAVOUR: perf-llvm
+      TEST_ENV: x86_64-linux-llvm
     steps:
       - run:
           name: Install LLVM
@@ -204,12 +230,14 @@ jobs:
           name: Verify that llc works
           command: llc
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
       - *configure_unix
       - *make
       - *test
+      - *push_perf_note
 
   # Nightly build with -DDEBUG using devel2 flavour
   "validate-x86_64-linux-debug":
@@ -219,8 +247,11 @@ jobs:
     environment:
       BUILD_FLAVOUR: devel2
       <<: *buildenv
+      TEST_ENV: x86_64-linux-debug
+      SKIP_PERF_TESTS: YES
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
@@ -228,6 +259,7 @@ jobs:
       - *make
       - *test
       - *store_test_results
+      - *push_perf_note
 
   "validate-i386-linux":
     resource_class: xlarge
@@ -236,8 +268,10 @@ jobs:
     environment:
       <<: *buildenv
       GHC_COLLECTOR_FLAVOR: i386-linux
+      TEST_ENV: i386-linux
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
@@ -247,6 +281,7 @@ jobs:
       - *storeartifacts
       - *test
       - *store_test_results
+      - *push_perf_note
 
   "validate-x86_64-fedora":
     resource_class: xlarge
@@ -255,8 +290,10 @@ jobs:
     environment:
       <<: *buildenv
       GHC_COLLECTOR_FLAVOR: x86_64-fedora
+      TEST_ENV: x86_64-fedora
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
@@ -266,6 +303,7 @@ jobs:
       - *storeartifacts
       - *test
       - *store_test_results
+      - *push_perf_note
 
   "slow-validate-x86_64-linux":
     resource_class: xlarge
@@ -273,15 +311,18 @@ jobs:
       - image: ghcci/x86_64-linux:0.0.4
     environment:
       <<: *buildenv
+      TEST_ENV: slow-x86_64-linux
       GHC_COLLECTOR_FLAVOR: x86_64-linux
     steps:
       - checkout
+      - *set_git_identity
       - *prepare
       - *submodules
       - *boot
       - *configure_unix
       - *make
       - *slowtest
+      - *push_perf_note
 
 workflows:
   version: 2
