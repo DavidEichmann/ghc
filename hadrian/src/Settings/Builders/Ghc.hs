@@ -7,6 +7,7 @@ import Flavour
 import Packages
 import Settings.Builders.Common
 import Settings.Warnings
+import qualified Context as Context
 
 import Debug.Trace (trace)
 
@@ -49,7 +50,7 @@ ghcLinkArgs = builder (Ghc LinkHs) ? do
     intLib  <- getIntegerPackage
     gmpLibs <- notStage0 ? intLib == integerGmp ? pure ["gmp"]
     mconcat [ (Dynamic `wayUnit` way) ?
-              pure [ "-shared", "-dynamic", "-dynload", "deploy" ]
+                pure [ "-shared", "-dynamic", "-dynload", "deploy" ]
             , arg "-no-auto-link-packages"
             ,      nonHsMainPackage pkg  ? arg "-no-hs-main"
             , not (nonHsMainPackage pkg) ? arg "-rtsopts"
@@ -103,18 +104,26 @@ wayGhcArgs = do
     let
         dynRts = any (Dynamic `wayUnit`) rtsWays
         dynWay = Dynamic `wayUnit` way
-
-        traceMsg = "******** (package, way, dynRts): " ++ show (p, way, dynRts)
-
-
-        dynamic = if p == ghc 
+        dynamic = if p == ghc
                     then dynRts || dynWay
                     else dynWay
 
-
-
+    -- TODO get relative path from Origin
+    originPath <- dropFileName <$> getOutput
+    context <- getContext
+    libPath' <- expr (libPath context)
+    distDir <- expr Context.distDir
+    let
+        distPath = libPath' -/- distDir
+        originToLibsDir = makeRelativeNoSysLink originPath distPath
     mconcat [ if dynamic
-              then pure ["-fPIC", "-dynamic"]
+              then mconcat [ pure ["-fPIC", "-dynamic"]
+
+                            -- TODO check OS?
+                            -- NOTE:  $ORIGIN == getOutput
+                           , notStage0 ? pure [ "-optl-Wl,-rpath"
+                                              , "-optl-Wl,"
+                                                ++ ("$ORIGIN" -/- originToLibsDir) ] ]
               else arg "-static"
             , (Threaded  `wayUnit` way) ? arg "-optc-DTHREADED_RTS"
             , (Debug     `wayUnit` way) ? arg "-optc-DDEBUG"
