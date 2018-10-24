@@ -11,7 +11,6 @@ $(eval $(call canonicalise,HERE))
 package.%:
 	$(MAKE) --no-print-directory clean.$*
 	mkdir pkg.$*
-	ldd "$(TEST_HC)"
 	"$(TEST_HC)" -outputdir pkg.$* --make -v -o pkg.$*/setup Setup.hs
 	
 	"$(GHC_PKG)" init pkg.$*/local.package.conf
