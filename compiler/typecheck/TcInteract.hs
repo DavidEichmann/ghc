@@ -40,7 +40,7 @@ import Bag
 import MonadUtils ( concatMapM, foldlM )
 
 import CoreSyn
-import Data.List( partition, foldl', deleteFirstsBy )
+import Data.List( partition, deleteFirstsBy )
 import SrcLoc
 import VarEnv
 

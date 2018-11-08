@@ -281,8 +281,11 @@ ieWrappedName (IEName    (L _ n)) = n
 ieWrappedName (IEPattern (L _ n)) = n
 ieWrappedName (IEType    (L _ n)) = n
 
-ieLWrappedName :: LIEWrappedName name -> name
-ieLWrappedName (L l n) = ieWrappedName n
+lieWrappedName :: LIEWrappedName name -> name
+lieWrappedName (L l n) = ieWrappedName n
+
+ieLWrappedName :: LIEWrappedName name -> Located name
+ieLWrappedName (L l n) = L l (ieWrappedName n)
 
 replaceWrappedName :: IEWrappedName name1 -> name2 -> IEWrappedName name2
 replaceWrappedName (IEName    (L l _)) n = IEName    (L l n)

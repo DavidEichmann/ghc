@@ -59,7 +59,7 @@ import ErrUtils
 import qualified Stream
 
 import Control.Monad (ap)
-import Data.List (sort, groupBy, head)
+import Data.List (sort, groupBy)
 
 -- ----------------------------------------------------------------------------
 -- * Some Data Types

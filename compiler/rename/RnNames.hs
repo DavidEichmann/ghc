@@ -1092,7 +1092,7 @@ gresFromIE decl_spec (L loc ie, avail)
   = gresFromAvail prov_fn avail
   where
     is_explicit = case ie of
-                    IEThingAll _ name -> \n -> n == ieLWrappedName name
+                    IEThingAll _ name -> \n -> n == lieWrappedName name
                     _                 -> \_ -> True
     prov_fn name
       = Just (ImpSpec { is_decl = decl_spec, is_item = item_spec })
@@ -1347,13 +1347,13 @@ findImportUsage imports used_gres
               _other -> emptyNameSet -- No explicit import list => no unused-name list
 
         add_unused :: IE GhcRn -> NameSet -> NameSet
-        add_unused (IEVar _ n)      acc = add_unused_name (ieLWrappedName n) acc
-        add_unused (IEThingAbs _ n) acc = add_unused_name (ieLWrappedName n) acc
-        add_unused (IEThingAll _ n) acc = add_unused_all  (ieLWrappedName n) acc
+        add_unused (IEVar _ n)      acc = add_unused_name (lieWrappedName n) acc
+        add_unused (IEThingAbs _ n) acc = add_unused_name (lieWrappedName n) acc
+        add_unused (IEThingAll _ n) acc = add_unused_all  (lieWrappedName n) acc
         add_unused (IEThingWith _ p wc ns fs) acc =
           add_wc_all (add_unused_with pn xs acc)
-          where pn = ieLWrappedName p
-                xs = map ieLWrappedName ns ++ map (flSelector . unLoc) fs
+          where pn = lieWrappedName p
+                xs = map lieWrappedName ns ++ map (flSelector . unLoc) fs
                 add_wc_all = case wc of
                             NoIEWildcard -> id
                             IEWildcard _ -> add_unused_all pn

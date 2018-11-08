@@ -32,7 +32,7 @@ import PprCore  ( pprCoreBindings, pprRules )
 import OccurAnal( occurAnalyseExpr, occurAnalysePgm )
 import Literal  ( Literal(MachStr) )
 import Id
-import Var      ( varType, isNonCoVarId )
+import Var      ( isNonCoVarId )
 import VarSet
 import VarEnv
 import DataCon
