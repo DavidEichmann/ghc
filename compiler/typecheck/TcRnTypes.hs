@@ -557,8 +557,8 @@ data TcGblEnv
 
         tcg_dus       :: DefUses,   -- ^ What is defined in this module and what is used.
         tcg_used_gres :: TcRef [GlobalRdrElt],  -- ^ Records occurrences of imported entities
-          -- One entry for each occurrence; but may have different GREs for the same Name
-          -- See Note [Tracking unused binding and imports]
+          -- One entry for each occurrence; but may have different GREs for
+          -- the same Name See Note [Tracking unused binding and imports]
 
         tcg_keep :: TcRef NameSet,
           -- ^ Locally-defined top-level names to keep alive.

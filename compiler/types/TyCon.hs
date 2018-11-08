@@ -137,7 +137,8 @@ import {-# SOURCE #-} TysWiredIn ( runtimeRepTyCon, constraintKind
                                  , vecCountTyCon, vecElemTyCon, liftedTypeKind
                                  , mkFunKind, mkForAllKind )
 import {-# SOURCE #-} DataCon    ( DataCon, dataConExTyCoVars, dataConFieldLabels
-                                 , dataConTyCon, dataConFullSig, isUnboxedSumCon )
+                                 , dataConTyCon, dataConFullSig
+                                 , isUnboxedSumCon )
 
 import Binary
 import Var

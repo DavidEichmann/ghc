@@ -1215,8 +1215,8 @@ Say that an import-item is either
   * a particular item in an import list (eg import Foo( ..., x, ...)).
 The general idea is that for each /occurrence/ of an imported name, we will
 attribute that use to one import-item. Once we have processed all the
-occurrences, any import items with no uses attributed to them are unused, and are
-warned about. More precisely:
+occurrences, any import items with no uses attributed to them are unused,
+and are warned about. More precisely:
 
 1. For every RdrName in the program text, find its GlobalRdrElt.
 

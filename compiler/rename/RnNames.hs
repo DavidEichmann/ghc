@@ -1300,10 +1300,12 @@ type ImportDeclUsage
 warnUnusedImportDecls :: TcGblEnv -> RnM ()
 warnUnusedImportDecls gbl_env
   = do { uses <- readMutVar (tcg_used_gres gbl_env)
-       ; let user_imports = filterOut (ideclImplicit . unLoc) (tcg_rn_imports gbl_env)
-                            -- This whole function deals only with *user* imports
-                            -- both for warning about unnecessary ones, and for
-                            -- deciding the minimal ones
+       ; let user_imports = filterOut
+                              (ideclImplicit . unLoc)
+                              (tcg_rn_imports gbl_env)
+                -- This whole function deals only with *user* imports
+                -- both for warning about unnecessary ones, and for
+                -- deciding the minimal ones
              rdr_env = tcg_rdr_env gbl_env
              fld_env = mkFieldEnv rdr_env
 
