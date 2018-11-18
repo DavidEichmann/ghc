@@ -16,8 +16,28 @@ import qualified Rules.Selftest
 import qualified Rules.Test
 import qualified UserSettings
 
+import Packages (ghcPackages)
+import Hadrian.Package (pkgCabalFile)
+
 main :: IO ()
 main = do
+    -- Print all package cabal file paths
+    mapM_ putStrLn (pkgCabalFile <$> ghcPackages)
+
+
+    -- <ghc-root>/cabal.helper
+    --   `-> <build-dir>/**/distdirs.list       -- 
+    --        `-> <build-dir>/**/setup-config
+    --        `-> <build-dir>/**/*.cabal
+    --               ${PROJECT}/....  
+
+    -- Print all package build output paths "dist dirs"
+
+main' = do
+
+
+    
+
     -- Provide access to command line arguments and some user settings through
     -- Shake's type-indexed map 'shakeExtra'.
     argsMap <- CommandLine.cmdLineArgsMap
