@@ -41,3 +41,7 @@ buildPath context = buildRoot <&> (-/- buildDir context)
 -- | The expression that evaluates to the build path of the current 'Context'.
 getBuildPath :: Expr Context b FilePath
 getBuildPath = expr . buildPath =<< getContext
+
+-- | Path to the build.helper file relative to the build root.
+buildHelperPath :: Stage -> FilePath
+buildHelperPath stage = stageString stage -/- "build.helper"

@@ -53,6 +53,7 @@ executable hadrian
                        , Packages
                        , Rules
                        , Rules.BinaryDist
+                       , Rules.CabalHelper
                        , Rules.Clean
                        , Rules.Compile
                        , Rules.Configure

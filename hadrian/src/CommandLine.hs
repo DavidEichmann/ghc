@@ -24,7 +24,8 @@ data CommandLineArgs = CommandLineArgs
     , progressInfo   :: ProgressInfo
     , splitObjects   :: Bool
     , buildRoot      :: BuildRoot
-    , testArgs       :: TestArgs }
+    , testArgs       :: TestArgs
+    , cabalHelper    :: Bool }
     deriving (Eq, Show)
 
 -- | Default values for 'CommandLineArgs'.
@@ -38,7 +39,8 @@ defaultCommandLineArgs = CommandLineArgs
     , progressInfo   = Brief
     , splitObjects   = False
     , buildRoot      = BuildRoot "_build"
-    , testArgs       = defaultTestArgs }
+    , testArgs       = defaultTestArgs
+    , cabalHelper    = True }
 
 -- | These arguments are used by the `test` target.
 data TestArgs = TestArgs
@@ -176,6 +178,9 @@ readTestWay way =
             let newWays = way : testWays (testArgs flags)
             in flags { testArgs = (testArgs flags) {testWays = newWays} }
 
+readCabalHelper :: Either String (CommandLineArgs -> CommandLineArgs)
+readCabalHelper = Right $ \flags -> flags { cabalHelper = True }
+
 -- | Standard 'OptDescr' descriptions of Hadrian's command line arguments.
 optDescrs :: [OptDescr (Either String (CommandLineArgs -> CommandLineArgs))]
 optDescrs =
@@ -216,7 +221,9 @@ optDescrs =
     , Option [] ["test-verbose"] (OptArg readTestVerbose "TEST_VERBOSE")
       "A verbosity value between 0 and 5. 0 is silent, 4 and higher activates extra output."
     , Option [] ["test-way"] (OptArg readTestWay "TEST_WAY")
-      "only run these ways" ]
+      "only run these ways"
+      , Option [] ["cabal-helper"] (NoArg readCabalHelper)
+        "Generate cabal.helper files (used for tooling support)." ]
 
 -- | A type-indexed map containing Hadrian command line arguments to be passed
 -- to Shake via 'shakeExtra'.
@@ -244,6 +251,9 @@ lookupBuildRoot = buildRoot . lookupExtra defaultCommandLineArgs
 
 lookupFreeze1 :: Map.HashMap TypeRep Dynamic -> Bool
 lookupFreeze1 = freeze1 . lookupExtra defaultCommandLineArgs
+
+lookupCabalHelper :: Map.HashMap TypeRep Dynamic -> Bool
+lookupCabalHelper = cabalHelper . lookupExtra defaultCommandLineArgs
 
 cmdIntegerSimple :: Action Bool
 cmdIntegerSimple = integerSimple <$> cmdLineArgs

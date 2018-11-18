@@ -1,4 +1,4 @@
-module Rules (buildRules, oracleRules, packageTargets, topLevelTargets) where
+module Rules (allStages, buildRules, oracleRules, packageTargets, topLevelTargets) where
 
 import qualified Hadrian.Oracles.ArgsHash
 import qualified Hadrian.Oracles.Cabal.Rules
