@@ -25,7 +25,7 @@ import subprocess
 
 from testutil import getStdout, Watcher, str_warn, str_info
 from testglobals import getConfig, ghc_env, getTestRun, TestOptions, brokens
-from perf_notes import MetricChange
+from perf_notes import MetricChange, is_git_repo
 from junit import junit
 
 # Readline sometimes spews out ANSI escapes for some values of TERM,
@@ -83,6 +83,7 @@ all_ways = config.run_ways+config.compile_ways+config.other_ways
 if args.rootdir:
     config.rootdirs = args.rootdir
 
+hasMetricsFile = bool(config.metrics_file)
 config.metrics_file = args.metrics_file
 config.summary_file = args.summary_file
 config.no_print_summary = args.no_print_summary
@@ -117,7 +118,12 @@ if args.threads:
 if args.verbose is not None:
     config.verbose = args.verbose
 
-config.skip_perf_tests = args.skip_perf_tests
+# Note force skip perf tests: skip if this is not a git repo and no metrics file is
+# given. In this case there is no way to read the previous commit's perf test
+# results, nor a way to store new perf test results.
+isGitRepo = is_git_repo()
+forceSkipPerfTests = not hasMetricsFile and not isGitRepo
+config.skip_perf_tests = args.skip_perf_tests or forceSkipPerfTests
 config.only_perf_tests = args.only_perf_tests
 
 if args.test_env:
@@ -351,12 +357,22 @@ else:
     # flush everything before we continue
     sys.stdout.flush()
 
+    # Warn if had to force skip perf tests (see Note force skip perf tests).
+    spacing = "       "
+    if forceSkipPerfTests and not args.skip_perf_tests:
+        print()
+        print(str_warn('Not a Git Repo') + ' and no --metrics-file provided. All performance tests have been skipped.')
+        print(spacing + 'Git is required because performance test results are compared with the previous git commit\'s results (stored with git notes).')
+
     # Warn of new metrics.
     new_metrics = [metric for (change, metric) in t.metrics if change == MetricChange.NewMetric]
-    spacing = "    "
     if any(new_metrics):
+        reason = 'the previous git commit doesn\'t have recorded metrics for the following tests. \
+                  If the tests exist on the previous commit, then check it out and run the tests to generate the missing metrics.'
+        if not isGitRepo:
+            reason = 'this is not a git repo so the previous git commit\'s metrics cannot be loaded from git notes:'
         print()
-        print(str_warn('New Metrics') + ' the previous git commit doesn\'t have metrics for the following tests:')
+        print(str_warn('New Metrics') + ' these metrics trivially pass because ' + reason)
         print(spacing + ('\n' + spacing).join(set([metric.test for metric in new_metrics])))
 
     # Inform of how to accept metric changes.
@@ -369,14 +385,16 @@ else:
 
     summary(t, sys.stdout, config.no_print_summary, True)
 
+    # Write perf stats if any exist or if a metrics file is specified.
     stats = [stat for (_, stat) in t.metrics]
-    if config.metrics_file:
+    if hasMetricsFile:
         print('Appending ' + str(len(stats)) + ' stats to file: ' + config.metrics_file)
         with open(config.metrics_file, 'a') as file:
             file.write("\n" + Perf.format_perf_stat(stats))
-    else:
+    elif any(stats):
         Perf.append_perf_stat(stats)
 
+    # Write summary
     if config.summary_file:
         with open(config.summary_file, 'w') as file:
             summary(t, file)
