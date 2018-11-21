@@ -83,8 +83,8 @@ all_ways = config.run_ways+config.compile_ways+config.other_ways
 if args.rootdir:
     config.rootdirs = args.rootdir
 
-hasMetricsFile = bool(config.metrics_file)
 config.metrics_file = args.metrics_file
+hasMetricsFile = bool(config.metrics_file)
 config.summary_file = args.summary_file
 config.no_print_summary = args.no_print_summary
 
@@ -367,8 +367,8 @@ else:
     # Warn of new metrics.
     new_metrics = [metric for (change, metric) in t.metrics if change == MetricChange.NewMetric]
     if any(new_metrics):
-        reason = 'the previous git commit doesn\'t have recorded metrics for the following tests. \
-                  If the tests exist on the previous commit, then check it out and run the tests to generate the missing metrics.'
+        reason = 'the previous git commit doesn\'t have recorded metrics for the following tests.' + \
+                  ' If the tests exist on the previous commit, then check it out and run the tests to generate the missing metrics.'
         if not isGitRepo:
             reason = 'this is not a git repo so the previous git commit\'s metrics cannot be loaded from git notes:'
         print()
