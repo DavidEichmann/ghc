@@ -20,11 +20,13 @@ from math import ceil, trunc
 from testutil import passed, failBecause
 
 
-# Check if the current directory is really a git repo.
-def is_git_repo():
+# Check if "git status" can be run successfully.
+# True implies the current directory is a git repo.
+def can_git_status():
     try:
-        return bool(subprocess.check_output(['git', 'rev-parse', '--is-inside-work-tree']))
-    except:
+        subprocess.check_call(['git', 'rev-parse', '--is-inside-work-tree'])
+        return True
+    except subprocess.CalledProcessError:
         return False
 
 #
@@ -191,7 +193,7 @@ def format_perf_stat(stats):
 # Returns True if the note was successfully appended.
 def append_perf_stat(stats, commit='HEAD', namespace='perf', max_tries=5):
     # If no results or not a git repo, then return.
-    if is_git_repo():
+    if can_git_status():
         return False
 
     # Append to git note
