@@ -24,7 +24,7 @@ from testutil import passed, failBecause
 # True implies the current directory is a git repo.
 def can_git_status():
     try:
-        subprocess.check_call(['git', 'rev-parse', '--is-inside-work-tree'])
+        subprocess.check_call(['git', 'status'])
         return True
     except subprocess.CalledProcessError:
         return False
