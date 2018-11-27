@@ -192,10 +192,6 @@ def format_perf_stat(stats):
 # Each retry will wait 1 second.
 # Returns True if the note was successfully appended.
 def append_perf_stat(stats, commit='HEAD', namespace='perf', max_tries=5):
-    # If no results or not a git repo, then return.
-    if can_git_status():
-        return False
-
     # Append to git note
     print('Appending ' + str(len(stats)) + ' stats to git notes.')
     stats_str = format_perf_stat(stats)

@@ -361,8 +361,9 @@ else:
     spacing = "       "
     if forceSkipPerfTests and not args.skip_perf_tests:
         print()
-        print(str_warn('Skipping All Performance Tests') + ' Failed to run git and no --metrics-file provided.')
+        print(str_warn('Skipping All Performance Tests') + ' `git status` exited with non-zero exit code.')
         print(spacing + 'Git is required because performance test results are compared with the previous git commit\'s results (stored with git notes).')
+        print(spacing + 'You can still run the tests without git by specifying an output file with --metrics-file FILE.')
 
     # Warn of new metrics.
     new_metrics = [metric for (change, metric) in t.metrics if change == MetricChange.NewMetric]
@@ -392,7 +393,7 @@ else:
         print('Appending ' + str(len(stats)) + ' stats to file: ' + config.metrics_file)
         with open(config.metrics_file, 'a') as file:
             file.write("\n" + Perf.format_perf_stat(stats))
-    elif any(stats):
+    elif canGitStatus and any(stats):
         Perf.append_perf_stat(stats)
 
     # Write summary
